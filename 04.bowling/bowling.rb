@@ -25,34 +25,43 @@ class Bowling
   end
 
   def calculate
-    score = 0
+    @score = 0
     frame = 1
     first_throw = true
+
     @inputs_array.each_with_index do |value, index|
-      score += value
+      add_score(value)
 
-      if frame != 10
-        if first_throw && value == 10
-          # strike
-          frame += 1
+      next if frame == 10
 
-          # Next 2 throws are added as additional points
-          score = score + @inputs_array[index + 1] + @inputs_array[index + 2]
-        elsif !first_throw && (value + @inputs_array[index - 1]) == 10
-          # spare
-          first_throw = !first_throw
-          frame += 1
-
-          # Next throw is added as additional point
-          score += @inputs_array[index + 1]
-        else
-          frame += 1 unless first_throw
-          first_throw = !first_throw
-        end
+      if strike?(first_throw, value)
+        frame += 1
+        add_score(@inputs_array[index + 1], @inputs_array[index + 2])
+      elsif spare?(first_throw, index)
+        first_throw = true
+        frame += 1
+        add_score(@inputs_array[index + 1])
+      else
+        frame += 1 unless first_throw
+        first_throw = !first_throw
       end
     end
 
-    score
+    @score
+  end
+
+  def strike?(first_throw, value)
+    first_throw && value == 10
+  end
+
+  def spare?(first_throw, index)
+    !first_throw && (@inputs_array[index] + @inputs_array[index - 1]) == 10
+  end
+
+  def add_score(*values)
+    values.each do |value|
+      @score += value
+    end
   end
 end
 
