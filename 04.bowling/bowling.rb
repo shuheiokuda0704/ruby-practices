@@ -37,14 +37,14 @@ class Bowling
           frame += 1
 
           # Next 2 throws are added as additional points
-          score = score + @inputs_array[index+1] + @inputs_array[index+2]
-        elsif !first_throw && (value + @inputs_array[index-1]) == 10
+          score = score + @inputs_array[index + 1] + @inputs_array[index + 2]
+        elsif !first_throw && (value + @inputs_array[index - 1]) == 10
           # spare
           first_throw = !first_throw
           frame += 1
 
           # Next throw is added as additional point
-          score = score + @inputs_array[index+1]
+          score += @inputs_array[index + 1]
         else
           frame += 1 unless first_throw
           first_throw = !first_throw
