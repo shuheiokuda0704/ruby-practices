@@ -2,7 +2,7 @@
 
 class Ls
   MAX_COLUMN_NUM = 3
-  COLUMN_MARGIN  = 2
+  COLUMN_MARGIN  = 7
 
   def initialize(target_dir: '.')
     @target_dir = target_dir
