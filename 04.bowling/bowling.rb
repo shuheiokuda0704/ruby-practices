@@ -8,7 +8,6 @@ class Bowling
   def score
     parse_inputs
     @score = calculate
-    @score
   end
 
   private
