@@ -25,28 +25,28 @@ class Calendar
       @month = current_date.month if @month.nil?
     end
 
-    if @month < 1 || @month > 12
-      puts "Invalid Option Value. for month, please set 1-12"
-      raise ArgumentError
-    end
+    return unless @month < 1 || @month > 12
+
+    puts 'Invalid Option Value. for month, please set 1-12'
+    raise ArgumentError
   end
 
   def show_month_and_year
-    printf("%6d月 %4d\n", @month, @year)
+    printf("%<month>6d月 %<year>4d\n", month: @month, year: @year)
   end
 
   def show_day_of_week
-    puts "日 月 火 水 木 金 土"
+    puts '日 月 火 水 木 金 土'
   end
 
   def show_days
     fisrt_day_of_this_month = Date.new(@year, @month, 1)
     last_day_of_this_month  = Date.new(@year, @month, -1)
 
-    print " " * 3 * fisrt_day_of_this_month.wday  # Shift for first day
+    print ' ' * 3 * fisrt_day_of_this_month.wday  # Shift for first day
 
-    ( fisrt_day_of_this_month.day..last_day_of_this_month.day ).each do | day |
-      printf("%2d ", day)
+    (fisrt_day_of_this_month.day..last_day_of_this_month.day).each do |day|
+      printf('%2d ', day)
       printf("\n") if Date.new(@year, @month, day).saturday?
     end
     printf("\n")
@@ -61,9 +61,8 @@ begin
   opt.on('-y YEAR')  { |y| year  = y.to_i }
   opt.on('-m MONTH') { |m| month = m.to_i }
   opt.parse!(ARGV)
-
 rescue OptionParser::InvalidOption
-  puts "Invalid Option. Please use -y for year and -m for month"
+  puts 'Invalid Option. Please use -y for year and -m for month'
   raise
 end
 
