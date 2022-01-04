@@ -14,10 +14,8 @@ class Ls
     @max_item_name_length = 0
 
     Dir.foreach('..') do |item|
-      @items.append(item) unless item =~ /^\./
-      if @max_item_name_length < item.length
-        @max_item_name_length = item.length
-      end
+      @items.append(item) unless /^\./.match?(item)
+      @max_item_name_length = item.length if @max_item_name_length < item.length
     end
 
     @items.sort!
@@ -31,10 +29,8 @@ class Ls
 
         print @items[index]
         break if index == (@items.length - 1)
-
-        if column != (MAX_COLUMN_NUM - 1)
-          print ' ' * (@max_item_name_length - @items[index].length + COLUMN_MARGIN)
-        end
+        next if column == (MAX_COLUMN_NUM - 1)
+        print ' ' * (@max_item_name_length - @items[index].length + COLUMN_MARGIN) 
       end
 
       puts ''
