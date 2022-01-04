@@ -31,9 +31,9 @@ class Ls
     (0..(row_length - 1)).each do |row|
       (0..(MAX_COLUMN_NUM - 1)).each do |column|
         index = row + column * row_length
-
         print @items[index]
-        break if ((row + 1) * (column + 1)) > (@items.length - 1)
+
+        break if ((row + 1) * (column + 1)) > @items.length
         next if column == (MAX_COLUMN_NUM - 1)
 
         print ' ' * (@max_item_name_length - @items[index].length + COLUMN_MARGIN)
