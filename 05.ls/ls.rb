@@ -26,14 +26,14 @@ class Ls
   end
 
   def render_directory_items
-    row_no = ((@items.length - 1) / MAX_COLUMN_NUM) + 1
+    row_length = ((@items.length - 1) / MAX_COLUMN_NUM) + 1
 
-    (0..(row_no - 1)).each do |row|
+    (0..(row_length - 1)).each do |row|
       (0..(MAX_COLUMN_NUM - 1)).each do |column|
-        index = MAX_COLUMN_NUM * row + column
+        index = row + column * row_length
 
         print @items[index]
-        break if index == (@items.length - 1)
+        break if ((row + 1) * (column + 1)) > (@items.length - 1)
         next if column == (MAX_COLUMN_NUM - 1)
 
         print ' ' * (@max_item_name_length - @items[index].length + COLUMN_MARGIN)
