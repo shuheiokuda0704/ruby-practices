@@ -27,7 +27,7 @@ class Calendar
   end
 
   def show_days
-    current_date = Date.today
+    today_date = Date.today
 
     fisrt_day_of_this_month = Date.new(@year, @month, 1)
     last_day_of_this_month  = Date.new(@year, @month, -1)
@@ -35,16 +35,16 @@ class Calendar
     print ' ' * 3 * fisrt_day_of_this_month.wday  # Shift for first day
 
     (fisrt_day_of_this_month.day..last_day_of_this_month.day).each do |day|
-      if @month == current_date.month &&
-         @year == current_date.year &&
-         day   == current_date.day
+      current_date = Date.new(@year, @month, day)
+
+      if current_date == today_date
         print "\e[31m"
         printf('%2d ', day)
         print "\e[0m"
       else
         printf('%2d ', day)
       end
-      printf("\n") if Date.new(@year, @month, day).saturday?
+      printf("\n") if current_date.saturday?
     end
     printf("\n")
   end
