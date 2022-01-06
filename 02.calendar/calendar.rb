@@ -55,8 +55,8 @@ month = nil
 opt = OptionParser.new
 
 begin
-  opt.on('-y YEAR')  { |y| year  = y.to_i }
-  opt.on('-m MONTH') { |m| month = m.to_i }
+  opt.on('-y YEAR', Integer)  { |y| year  = y }
+  opt.on('-m MONTH', Integer) { |m| month = m }
   opt.parse!(ARGV)
 rescue OptionParser::InvalidOption
   puts 'Invalid Option. Please use -y for year and -m for month'
