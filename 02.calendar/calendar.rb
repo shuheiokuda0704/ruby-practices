@@ -5,31 +5,18 @@ require 'date'
 
 class Calendar
   def initialize(year: nil, month: nil)
-    @year = year
-    @month = month
+    current_date = Date.today
+    @year = year || Date.today.year
+    @month = month || Date.today.month
   end
 
   def show
-    validate_arguments
     show_month_and_year
     show_day_of_week
     show_days
   end
 
   private
-
-  def validate_arguments
-    if @year.nil? || @month.nil?
-      current_date = Date.today
-      @year  = current_date.year  if @year.nil?
-      @month = current_date.month if @month.nil?
-    end
-
-    return unless @month < 1 || @month > 12
-
-    puts 'Invalid Option Value. for month, please set 1-12'
-    raise ArgumentError
-  end
 
   def show_month_and_year
     printf("%<month>6d月 %<year>4d\n", month: @month, year: @year)
