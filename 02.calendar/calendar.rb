@@ -35,15 +35,20 @@ class Calendar
     print ' ' * 3 * fisrt_date.wday  # Shift for first day
 
     (fisrt_date..last_date).each do |date|
-
       if date == today
-        printf('%2d %d', date.day)
+        highlight_printf('%2d ', date.day)
       else
         printf('%2d ', date.day)
       end
       printf("\n") if date.saturday?
     end
     printf("\n")
+  end
+
+  def highlight_printf(format, *arg)
+    print "\e[31m"
+    printf(format, *arg)
+    print "\e[0m"
   end
 end
 
