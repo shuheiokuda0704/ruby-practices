@@ -54,7 +54,7 @@ class Bowling
   end
 
   def spare?(first_throw, index)
-    !first_throw && (@inputs_array[index] + @inputs_array[index - 1]) == 10
+    !first_throw && (@inputs_array[(index - 1)..index]).sum == 10
   end
 
   def add_score(*values)
