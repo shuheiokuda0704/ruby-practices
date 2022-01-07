@@ -44,9 +44,6 @@ class Bowling
     end
   end
 
-  def calculate
-  end
-
   def strike?(first_throw, value)
     first_throw && value == 10
   end
