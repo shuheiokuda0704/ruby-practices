@@ -58,9 +58,7 @@ class Bowling
   end
 
   def add_score(*values)
-    values.each do |value|
-      @score += value
-    end
+    @score += values.sum
   end
 end
 
