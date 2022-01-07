@@ -6,23 +6,6 @@ class Bowling
   end
 
   def score
-    calculate
-  end
-
-  private
-
-  def parse_inputs(input)
-    inputs = input.split(',')
-    inputs.map do |i|
-      if i.eql?('X')
-        10
-      else
-        i.to_i
-      end
-    end
-  end
-
-  def calculate
     score = 0
     frame = 1
     first_throw = true
@@ -46,6 +29,22 @@ class Bowling
     end
 
     score
+  end
+
+  private
+
+  def parse_inputs(input)
+    inputs = input.split(',')
+    inputs.map do |i|
+      if i.eql?('X')
+        10
+      else
+        i.to_i
+      end
+    end
+  end
+
+  def calculate
   end
 
   def strike?(first_throw, value)
