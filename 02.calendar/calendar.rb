@@ -5,9 +5,8 @@ require 'date'
 
 class Calendar
   def initialize(year: nil, month: nil)
-    current_date = Date.today
-    @year = year || current_date.year
-    @month = month || current_date.month
+    @year = year || Date.today.year
+    @month = month || Date.today.month
   end
 
   def show
