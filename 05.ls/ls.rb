@@ -26,8 +26,8 @@ class Ls
   def render_directory_items
     row_length = ((@items.length - 1) / MAX_COLUMN_NUM) + 1
 
-    (0..(row_length - 1)).each do |row|
-      (0..(MAX_COLUMN_NUM - 1)).each do |column|
+    row_length.times do |row|
+      MAX_COLUMN_NUM.times do |column|
         index = row + column * row_length
         print @items[index]
 
