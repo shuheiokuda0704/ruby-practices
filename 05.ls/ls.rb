@@ -5,24 +5,22 @@ class Ls
   COLUMN_MARGIN  = 7
 
   def initialize(target_dir: '.')
-    @target_dir = target_dir
+    @items = parse_directory_items(target_dir)
+    @max_item_name_length = @items.map(&:length).max
   end
 
   def execute
-    parse_directory_items
     render_directory_items
   end
 
-  def parse_directory_items
-    @items = []
-    @max_item_name_length = 0
+  def parse_directory_items(target_dir)
+    items = []
 
-    Dir.foreach(@target_dir) do |item|
-      @items.append(item) unless /^\./.match?(item)
-      @max_item_name_length = item.length if @max_item_name_length < item.length
+    Dir.foreach(target_dir) do |item|
+      items.append(item) unless /^\./.match?(item)
     end
 
-    @items.sort!
+    items.sort
   end
 
   def render_directory_items
