@@ -5,7 +5,8 @@ class Ls
   MAX_COLUMN_NUM = 3
   COLUMN_MARGIN  = 7
 
-  def initialize(target_dir: '.')
+  def initialize(target_dir: '.', params: {})
+    @params = params
     @items = parse_directory_items(target_dir)
     @max_item_name_length = @items.map(&:length).max
   end
@@ -18,7 +19,7 @@ class Ls
     items = []
 
     Dir.foreach(target_dir) do |item|
-      items.append(item) unless /^\./.match?(item)
+      items.append(item) if @params.include?(:a) || !item.match?(/^\./)
     end
 
     items.sort
@@ -44,6 +45,13 @@ class Ls
 end
 
 if __FILE__ == $PROGRAM_NAME
-  ls = Ls.new(target_dir: ARGV[0] || '.')
+  require 'optparse'
+
+  opt = OptionParser.new
+  params = {}
+  opt.on('-a') { |v| params[:a] = v }
+  opt.parse!(ARGV)
+
+  ls = Ls.new(target_dir: ARGV[0] || '.', params: params)
   ls.execute
 end
