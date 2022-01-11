@@ -43,5 +43,7 @@ class Ls
   end
 end
 
-ls = Ls.new(target_dir: ARGV[0] || '.')
-ls.execute
+if __FILE__ == $PROGRAM_NAME
+  ls = Ls.new(target_dir: ARGV[0] || '.')
+  ls.execute
+end
