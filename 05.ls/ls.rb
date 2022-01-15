@@ -1,35 +1,35 @@
+#!/usr/bin/env ruby
 # frozen_string_literal: true
 
 class Ls
   MAX_COLUMN_NUM = 3
   COLUMN_MARGIN  = 7
 
-  def initialize(target_dir: '.')
-    @target_dir = target_dir
+  def initialize(target_dir: '.', params: {})
+    @params = params
+    @items = parse_directory_items(target_dir)
+    @max_item_name_length = @items.map(&:length).max
   end
 
   def execute
-    parse_directory_items
     render_directory_items
   end
 
-  def parse_directory_items
-    @items = []
-    @max_item_name_length = 0
+  def parse_directory_items(target_dir)
+    items = []
 
-    Dir.foreach(@target_dir) do |item|
-      @items.append(item) unless /^\./.match?(item)
-      @max_item_name_length = item.length if @max_item_name_length < item.length
+    Dir.foreach(target_dir) do |item|
+      items.append(item) if @params.include?(:a) || !item.match?(/^\./)
     end
 
-    @items.sort!
+    items.sort
   end
 
   def render_directory_items
     row_length = ((@items.length - 1) / MAX_COLUMN_NUM) + 1
 
-    (0..(row_length - 1)).each do |row|
-      (0..(MAX_COLUMN_NUM - 1)).each do |column|
+    row_length.times do |row|
+      MAX_COLUMN_NUM.times do |column|
         index = row + column * row_length
         print @items[index]
 
@@ -44,5 +44,14 @@ class Ls
   end
 end
 
-ls = Ls.new(target_dir: ARGV[0] || '.')
-ls.execute
+if __FILE__ == $PROGRAM_NAME
+  require 'optparse'
+
+  opt = OptionParser.new
+  params = {}
+  opt.on('-a') { |v| params[:a] = v }
+  opt.parse!(ARGV)
+
+  ls = Ls.new(target_dir: ARGV[0] || '.', params: params)
+  ls.execute
+end
