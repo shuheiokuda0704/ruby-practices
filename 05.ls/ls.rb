@@ -22,7 +22,7 @@ class Ls
       items.append(item) if @params.include?(:a) || !item.match?(/^\./)
     end
 
-    items.sort
+    @params.include?(:r) ? items.sort.reverse : items.sort
   end
 
   def render_directory_items
@@ -50,6 +50,7 @@ if __FILE__ == $PROGRAM_NAME
   opt = OptionParser.new
   params = {}
   opt.on('-a') { |v| params[:a] = v }
+  opt.on('-r') { |v| params[:r] = v }
   opt.parse!(ARGV)
 
   ls = Ls.new(target_dir: ARGV[0] || '.', params: params)
