@@ -9,7 +9,7 @@ class Ls
 
   def initialize(target_dir: '.', params: {})
     @params = params
-    @target_dir = target_dir
+    @target_dir = +target_dir
     @target_dir.concat('/') if target_dir[-1] != '/'
     @items = parse_directory_items(target_dir)
     @max_item_name_length = @items.map(&:length).max
@@ -50,13 +50,31 @@ class Ls
       end
     else
       blocks = 0
-      max_nlink_digits = @items.map { |item| File.lstat("#{@target_dir + item}").nlink.to_s.length }.max
+      item_stats = []
       @items.each do |item|
         item_stat = File.lstat("#{@target_dir + item}")
-        puts "#{format_mode(item_stat.mode.to_s(8))}  #{format_nlink(item_stat.nlink, max_nlink_digits)}  #{format_uname(item_stat.uid)}  #{format_gname(item_stat.gid)} #{item_stat.size} #{item_stat.atime} #{item}"
+        # puts "#{format_mode(item_stat.mode.to_s(8))}  #{format_nlink(item_stat.nlink)}  #{format_uname(item_stat.uid)}  #{format_gname(item_stat.gid)} #{item_stat.size} #{item_stat.atime} #{item}"
+        item_stats << {
+                        mode:  format_mode(item_stat.mode.to_s(8)),
+                        nlink: item_stat.nlink.to_s,
+                        uname: format_uname(item_stat.uid),
+                        gname: format_gname(item_stat.gid),
+                        size:  item_stat.size.to_s,
+                        atime: format_time(item_stat.mtime),
+                        item_name: item
+                      }
         blocks += item_stat.blocks
       end
-      puts "Blocks: #{blocks}"
+      max_nlink_length = item_stats.map { |stat| stat[:nlink].length }.max
+      max_uname_length = item_stats.map { |stat| stat[:uname].length }.max
+      max_gname_length = item_stats.map { |stat| stat[:gname].length }.max
+      max_size_length  = item_stats.map { |stat| stat[:size].length }.max
+
+      puts "total #{blocks}"
+      item_stats.each do |stat|
+        puts format("%<mode>s  %#{max_nlink_length}<nlink>s %#{max_uname_length}<uname>s  %<gname>s  %#{max_size_length}<size>s %<atime>s %<item_name>s", 
+          mode: stat[:mode], nlink: stat[:nlink], uname: stat[:uname], gname: stat[:gname], size: stat[:size], atime: stat[:atime], item_name: stat[:item_name])
+      end
     end
   end
 
@@ -74,8 +92,12 @@ class Ls
     formatted_mode
   end
 
-  def format_nlink(nlink, max_nlink_digits)
-    format("%#{max_nlink_digits}d", nlink)
+  def format_time(time)
+    if time > Time.new(time.year - 1, time.mon, time.day, time.hour, time.min, time.sec)
+      format("%2<month>d %2<day>d %02<hour>d:%02<min>d", month: time.month, day: time.day, hour: time.hour, min: time.min)
+    else
+      format("%2<month>d %2<day>d  %4<year>d", month: time.month, day: time.day, year: time.year)
+    end
   end
 
   def format_uname(uid)
