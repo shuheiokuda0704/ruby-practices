@@ -7,6 +7,8 @@ class Ls
 
   def initialize(target_dir: '.', params: {})
     @params = params
+    @target_dir = target_dir
+    @target_dir.concat('/') if target_dir[-1] != '/'
     @items = parse_directory_items(target_dir)
     @max_item_name_length = @items.map(&:length).max
   end
@@ -43,9 +45,13 @@ class Ls
         puts ''
       end
     else
+      blocks = 0
       @items.each do |item|
-        puts item
+        item_stat = File.lstat("#{@target_dir + item}")
+        puts "#{item_stat.mode.to_s(8)} #{item_stat.nlink} #{item_stat.uid} #{item_stat.gid} #{item_stat.size} #{item_stat.atime} #{item}"
+        blocks += item_stat.blocks
       end
+      puts "Blocks: #{blocks}"
     end
   end
 end
