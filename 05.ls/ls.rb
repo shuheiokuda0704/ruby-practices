@@ -53,7 +53,7 @@ class Ls
       max_nlink_digits = @items.map { |item| File.lstat("#{@target_dir + item}").nlink.to_s.length }.max
       @items.each do |item|
         item_stat = File.lstat("#{@target_dir + item}")
-        puts "#{format_mode(item_stat.mode.to_s(8))}  #{format_nlink(item_stat.nlink, max_nlink_digits)}  #{format_uname(item_stat.uid)} #{item_stat.gid} #{item_stat.size} #{item_stat.atime} #{item}"
+        puts "#{format_mode(item_stat.mode.to_s(8))}  #{format_nlink(item_stat.nlink, max_nlink_digits)}  #{format_uname(item_stat.uid)}  #{format_gname(item_stat.gid)} #{item_stat.size} #{item_stat.atime} #{item}"
         blocks += item_stat.blocks
       end
       puts "Blocks: #{blocks}"
@@ -80,6 +80,10 @@ class Ls
 
   def format_uname(uid)
     Etc.getpwuid(uid).name
+  end
+
+  def format_gname(gid)
+    Etc.getgrgid(gid).name
   end
 end
 
