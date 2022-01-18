@@ -50,11 +50,24 @@ class Ls
       blocks = 0
       @items.each do |item|
         item_stat = File.lstat("#{@target_dir + item}")
-        puts "#{item_stat.mode.to_s(8)} #{item_stat.nlink} #{item_stat.uid} #{item_stat.gid} #{item_stat.size} #{item_stat.atime} #{item}"
+        puts "#{parse_mode(item_stat.mode.to_s(8))} #{item_stat.nlink} #{item_stat.uid} #{item_stat.gid} #{item_stat.size} #{item_stat.atime} #{item}"
         blocks += item_stat.blocks
       end
       puts "Blocks: #{blocks}"
     end
+  end
+
+  def parse_mode(mode)
+    type_map = {'01' => 'p', '02' => 'c', '04' => 'd', '06' => 'b', '10' => '-', '12' => 'l', '14' => 's'}
+    formatted_mode = format("%06<mode>d", mode: mode)
+    type_num = formatted_mode.slice(..1)
+    parsed_mode = +type_map[type_num]
+    formatted_mode.slice(3..).each_char do |c|
+      parsed_mode.concat(((c.to_i >> 2) % 2) == 1 ? 'r' : '-')
+      parsed_mode.concat(((c.to_i >> 1) % 2) == 1 ? 'w' : '-')
+      parsed_mode.concat(((c.to_i >> 0) % 2) == 1 ? 'x' : '-')
+    end
+    parsed_mode
   end
 end
 
