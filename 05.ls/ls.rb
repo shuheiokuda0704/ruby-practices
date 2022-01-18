@@ -26,20 +26,26 @@ class Ls
   end
 
   def render_directory_items
-    row_length = ((@items.length - 1) / MAX_COLUMN_NUM) + 1
+    unless @params.include?(:l)
+      row_length = ((@items.length - 1) / MAX_COLUMN_NUM) + 1
 
-    row_length.times do |row|
-      MAX_COLUMN_NUM.times do |column|
-        index = row + column * row_length
-        print @items[index]
+      row_length.times do |row|
+        MAX_COLUMN_NUM.times do |column|
+          index = row + column * row_length
+          print @items[index]
 
-        break if ((row + 1) * (column + 1)) > @items.length
-        next if column == (MAX_COLUMN_NUM - 1)
+          break if ((row + 1) * (column + 1)) > @items.length
+          next if column == (MAX_COLUMN_NUM - 1)
 
-        print ' ' * (@max_item_name_length - @items[index].length + COLUMN_MARGIN)
+          print ' ' * (@max_item_name_length - @items[index].length + COLUMN_MARGIN)
+        end
+
+        puts ''
       end
-
-      puts ''
+    else
+      @items.each do |item|
+        puts item
+      end
     end
   end
 end
@@ -51,6 +57,7 @@ if __FILE__ == $PROGRAM_NAME
   params = {}
   opt.on('-a') { |v| params[:a] = v }
   opt.on('-r') { |v| params[:r] = v }
+  opt.on('-l') { |v| params[:l] = v }
   opt.parse!(ARGV)
 
   ls = Ls.new(target_dir: ARGV[0] || '.', params: params)
