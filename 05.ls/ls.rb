@@ -17,6 +17,8 @@ class Ls
     render_directory_items
   end
 
+  private
+
   def parse_directory_items(target_dir)
     items = []
 
