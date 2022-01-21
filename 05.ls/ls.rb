@@ -33,32 +33,7 @@ class Ls
 
   def render_directory_items
     if @params.include?(:l)
-      blocks = 0
-      item_stats = []
-      @items.each do |item|
-        item_stat = File.lstat((@target_dir + item).to_s)
-        # puts "#{format_mode(item_stat.mode.to_s(8))}  #{format_nlink(item_stat.nlink)}  #{format_uname(item_stat.uid)}  #{format_gname(item_stat.gid)} #{item_stat.size} #{item_stat.atime} #{item}"
-        item_stats << {
-          mode: format_mode(item_stat.mode.to_s(8)),
-          nlink: item_stat.nlink.to_s,
-          uname: format_uname(item_stat.uid),
-          gname: format_gname(item_stat.gid),
-          size: item_stat.size.to_s,
-          atime: format_time(item_stat.mtime),
-          item_name: item
-        }
-        blocks += item_stat.blocks
-      end
-      max_nlink_length = item_stats.map { |stat| stat[:nlink].length }.max
-      max_uname_length = item_stats.map { |stat| stat[:uname].length }.max
-      max_gname_length = item_stats.map { |stat| stat[:gname].length }.max
-      max_size_length  = item_stats.map { |stat| stat[:size].length }.max
-
-      puts "total #{blocks}"
-      item_stats.each do |stat|
-        puts format("%<mode>s  %#{max_nlink_length}<nlink>s %#{max_uname_length}<uname>s  %<gname>s  %#{max_size_length}<size>s %<atime>s %<item_name>s",
-                    mode: stat[:mode], nlink: stat[:nlink], uname: stat[:uname], gname: stat[:gname], size: stat[:size], atime: stat[:atime], item_name: stat[:item_name])
-      end
+      render_directory_items_with_l_option
     else
       row_length = ((@items.length - 1) / MAX_COLUMN_NUM) + 1
 
@@ -76,6 +51,39 @@ class Ls
         puts ''
       end
     end
+  end
+
+  def render_directory_items_for_l
+    item_stats, blocks = format_item_stats
+    max_nlink_len = item_stats.map { |stat| stat[:nlink].length }.max
+    max_uname_len = item_stats.map { |stat| stat[:uname].length }.max
+    max_gname_len = item_stats.map { |stat| stat[:gname].length }.max
+    max_size_len  = item_stats.map { |stat| stat[:size].length }.max
+
+    puts "total #{blocks}"
+    item_stats.each do |stat|
+      puts format("%<md>s  %#{max_nlink_len}<nl>s %#{max_uname_len}<un>s  %#{max_gname_len}<gn>s  %#{max_size_len}<sz>s %<at>s %<in>s",
+                  md: stat[:mode], nl: stat[:nlink], un: stat[:uname], gn: stat[:gname], sz: stat[:size], at: stat[:atime], in: stat[:item_name])
+    end
+  end
+
+  def format_item_stats
+    blocks = 0
+    item_stats = []
+    @items.each do |item|
+      item_stat = File.lstat((@target_dir + item).to_s)
+      item_stats << {
+        mode: format_mode(item_stat.mode.to_s(8)),
+        nlink: item_stat.nlink.to_s,
+        uname: format_uname(item_stat.uid),
+        gname: format_gname(item_stat.gid),
+        size: item_stat.size.to_s,
+        atime: format_time(item_stat.mtime),
+        item_name: item
+      }
+      blocks += item_stat.blocks
+    end
+    [item_stats, blocks]
   end
 
   def format_mode(mode)
