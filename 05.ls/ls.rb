@@ -33,7 +33,7 @@ class Ls
 
   def render_directory_items
     if @params.include?(:l)
-      render_directory_items_with_l_option
+      render_directory_items_for_l
     else
       row_length = ((@items.length - 1) / MAX_COLUMN_NUM) + 1
 
