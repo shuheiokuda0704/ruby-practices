@@ -8,7 +8,7 @@ class Ls
   COLUMN_MARGIN  = 7
 
   def initialize(target: '.', params: {})
-    return unless File.exist?(@target)
+    return unless File.exist?(target)
 
     @params = params
     @target = +target
