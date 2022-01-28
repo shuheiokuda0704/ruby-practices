@@ -35,12 +35,12 @@ class Ls
   def parse_items
     items = []
 
-    unless @is_dir
-      items.append(@target)
-    else
+    if @is_dir
       Dir.foreach(@target) do |item|
         items.append(item) if @params.include?(:a) || !item.match?(/^\./)
       end
+    else
+      items.append(@target)
     end
 
     @params.include?(:r) ? items.sort.reverse : items.sort
@@ -49,26 +49,24 @@ class Ls
   def render_items
     if @params.include?(:l)
       render_items_for_l
-    else
-      unless @is_dir
-        print @target
-      else
-        row_length = ((@items.length - 1) / MAX_COLUMN_NUM) + 1
+    elsif @is_dir
+      row_length = ((@items.length - 1) / MAX_COLUMN_NUM) + 1
 
-        row_length.times do |row|
-          MAX_COLUMN_NUM.times do |column|
-            index = row + column * row_length
-            print @items[index]
+      row_length.times do |row|
+        MAX_COLUMN_NUM.times do |column|
+          index = row + column * row_length
+          print @items[index]
 
-            break if ((row + 1) * (column + 1)) > @items.length
-            next if column == (MAX_COLUMN_NUM - 1)
+          break if ((row + 1) * (column + 1)) > @items.length
+          next if column == (MAX_COLUMN_NUM - 1)
 
-            print ' ' * (@max_item_name_length - @items[index].length + COLUMN_MARGIN)
-          end
-
-          puts ''
+          print ' ' * (@max_item_name_length - @items[index].length + COLUMN_MARGIN)
         end
+
+        puts ''
       end
+    else
+      print @target
     end
   end
 
@@ -120,9 +118,9 @@ class Ls
 
   def format_time(time)
     if time > Time.new(Time.now.year - 1, time.mon, time.day, time.hour, time.min, time.sec)
-      time.strftime("%_m %_d %H:%M")
+      time.strftime('%_m %_d %H:%M')
     else
-      time.strftime("%_m %_d  %Y")
+      time.strftime('%_m %_d  %Y')
     end
   end
 
