@@ -88,10 +88,10 @@ class Ls
 
   def format_item_stats
     blocks = 0
-    item_stats = []
-    @items.each do |item|
+    item_stats = @items.map do |item|
       item_stat = File.lstat((@is_dir ? @target + item : @target).to_s)
-      item_stats << {
+      blocks += item_stat.blocks
+      {
         mode: format_mode(item_stat.mode.to_s(8)),
         nlink: item_stat.nlink.to_s,
         uname: format_uname(item_stat.uid),
@@ -100,7 +100,6 @@ class Ls
         atime: format_time(item_stat.mtime),
         item_name: item
       }
-      blocks += item_stat.blocks
     end
     [item_stats, blocks]
   end
