@@ -7,53 +7,72 @@ class Ls
   MAX_COLUMN_NUM = 3
   COLUMN_MARGIN  = 7
 
-  def initialize(target_dir: '.', params: {})
+  def initialize(target: '.', params: {})
     @params = params
-    @target_dir = +target_dir
-    @target_dir.concat('/') if target_dir[-1] != '/'
-    @items = parse_directory_items(target_dir)
-    @max_item_name_length = @items.map(&:length).max
+    @target = +target
+    @is_dir = File.directory?(@target)
+    if File.exist?(@target)
+      @target.concat('/') if @is_dir && @target[-1] != '/'
+      @items = parse_items
+      @max_item_name_length = @items.map(&:length).max
+    else
+      @items = nil
+      @max_item_name_length = 0
+    end
   end
 
   def execute
-    render_directory_items
+    unless @items
+      puts "ls: #{@target}: No such file or directory"
+      return
+    end
+
+    render_items
   end
 
   private
 
-  def parse_directory_items(target_dir)
+  def parse_items
     items = []
 
-    Dir.foreach(target_dir) do |item|
-      items.append(item) if @params.include?(:a) || !item.match?(/^\./)
+    unless @is_dir
+      items.append(@target)
+    else
+      Dir.foreach(@target) do |item|
+        items.append(item) if @params.include?(:a) || !item.match?(/^\./)
+      end
     end
 
     @params.include?(:r) ? items.sort.reverse : items.sort
   end
 
-  def render_directory_items
+  def render_items
     if @params.include?(:l)
-      render_directory_items_for_l
+      render_items_for_l
     else
-      row_length = ((@items.length - 1) / MAX_COLUMN_NUM) + 1
+      unless @is_dir
+        print @target
+      else
+        row_length = ((@items.length - 1) / MAX_COLUMN_NUM) + 1
 
-      row_length.times do |row|
-        MAX_COLUMN_NUM.times do |column|
-          index = row + column * row_length
-          print @items[index]
+        row_length.times do |row|
+          MAX_COLUMN_NUM.times do |column|
+            index = row + column * row_length
+            print @items[index]
 
-          break if ((row + 1) * (column + 1)) > @items.length
-          next if column == (MAX_COLUMN_NUM - 1)
+            break if ((row + 1) * (column + 1)) > @items.length
+            next if column == (MAX_COLUMN_NUM - 1)
 
-          print ' ' * (@max_item_name_length - @items[index].length + COLUMN_MARGIN)
+            print ' ' * (@max_item_name_length - @items[index].length + COLUMN_MARGIN)
+          end
+
+          puts ''
         end
-
-        puts ''
       end
     end
   end
 
-  def render_directory_items_for_l
+  def render_items_for_l
     item_stats, blocks = format_item_stats
     max_nlink_len = item_stats.map { |stat| stat[:nlink].length }.max
     max_uname_len = item_stats.map { |stat| stat[:uname].length }.max
@@ -71,7 +90,7 @@ class Ls
     blocks = 0
     item_stats = []
     @items.each do |item|
-      item_stat = File.lstat((@target_dir + item).to_s)
+      item_stat = File.lstat((@is_dir ? @target + item : @target).to_s)
       item_stats << {
         mode: format_mode(item_stat.mode.to_s(8)),
         nlink: item_stat.nlink.to_s,
@@ -127,6 +146,6 @@ if __FILE__ == $PROGRAM_NAME
   opt.on('-l') { |v| params[:l] = v }
   opt.parse!(ARGV)
 
-  ls = Ls.new(target_dir: ARGV[0] || '.', params: params)
+  ls = Ls.new(target: ARGV[0] || '.', params: params)
   ls.execute
 end
