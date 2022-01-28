@@ -122,10 +122,8 @@ class Ls
   def format_time(time)
     if time > Time.new(Time.now.year - 1, time.mon, time.day, time.hour, time.min, time.sec)
       time.strftime("%_m %_d %H:%M")
-      format('%2<month>d %2<day>d %02<hour>d:%02<min>d', month: time.month, day: time.day, hour: time.hour, min: time.min)
     else
       time.strftime("%_m %_d  %Y")
-      format('%2<month>d %2<day>d  %4<year>d', month: time.month, day: time.day, year: time.year)
     end
   end
 
