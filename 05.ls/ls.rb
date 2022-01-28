@@ -8,17 +8,14 @@ class Ls
   COLUMN_MARGIN  = 7
 
   def initialize(target: '.', params: {})
+    return unless File.exist?(@target)
+
     @params = params
     @target = +target
     @is_dir = File.directory?(@target)
-    if File.exist?(@target)
-      @target.concat('/') if @is_dir && @target[-1] != '/'
-      @items = parse_items
-      @max_item_name_length = @items.map(&:length).max
-    else
-      @items = nil
-      @max_item_name_length = 0
-    end
+    @target.concat('/') if @is_dir && @target[-1] != '/'
+    @items = parse_items
+    @max_item_name_length = @items.map(&:length).max
   end
 
   def execute
@@ -66,7 +63,7 @@ class Ls
         puts ''
       end
     else
-      print @target
+      puts @target
     end
   end
 
@@ -92,8 +89,8 @@ class Ls
       {
         mode: format_mode(item_stat.mode.to_s(8)),
         nlink: item_stat.nlink.to_s,
-        uname: format_uname(item_stat.uid),
-        gname: format_gname(item_stat.gid),
+        uname: Etc.getpwuid(item_stat.uid).name,
+        gname: Etc.getgrgid(item_stat.gid).name,
         size: item_stat.size.to_s,
         atime: format_time(item_stat.mtime),
         item_name: item
@@ -122,14 +119,6 @@ class Ls
     else
       time.strftime('%_m %_d  %Y')
     end
-  end
-
-  def format_uname(uid)
-    Etc.getpwuid(uid).name
-  end
-
-  def format_gname(gid)
-    Etc.getgrgid(gid).name
   end
 end
 
