@@ -7,34 +7,46 @@ class Ls
   MAX_COLUMN_NUM = 3
   COLUMN_MARGIN  = 7
 
-  def initialize(target_dir: '.', params: {})
+  def initialize(target: '.', params: {})
+    return unless File.exist?(target)
+
     @params = params
-    @target_dir = +target_dir
-    @target_dir.concat('/') if target_dir[-1] != '/'
-    @items = parse_directory_items(target_dir)
+    @target = +target
+    @is_dir = File.directory?(@target)
+    @target.concat('/') if @is_dir && @target[-1] != '/'
+    @items = parse_items
     @max_item_name_length = @items.map(&:length).max
   end
 
   def execute
-    render_directory_items
+    unless @items
+      puts "ls: #{@target}: No such file or directory"
+      return
+    end
+
+    render_items
   end
 
   private
 
-  def parse_directory_items(target_dir)
+  def parse_items
     items = []
 
-    Dir.foreach(target_dir) do |item|
-      items.append(item) if @params.include?(:a) || !item.match?(/^\./)
+    if @is_dir
+      Dir.foreach(@target) do |item|
+        items.append(item) if @params.include?(:a) || !item.match?(/^\./)
+      end
+    else
+      items.append(@target)
     end
 
     @params.include?(:r) ? items.sort.reverse : items.sort
   end
 
-  def render_directory_items
+  def render_items
     if @params.include?(:l)
-      render_directory_items_for_l
-    else
+      render_items_for_l
+    elsif @is_dir
       row_length = ((@items.length - 1) / MAX_COLUMN_NUM) + 1
 
       row_length.times do |row|
@@ -50,10 +62,12 @@ class Ls
 
         puts ''
       end
+    else
+      puts @target
     end
   end
 
-  def render_directory_items_for_l
+  def render_items_for_l
     item_stats, blocks = format_item_stats
     max_nlink_len = item_stats.map { |stat| stat[:nlink].length }.max
     max_uname_len = item_stats.map { |stat| stat[:uname].length }.max
@@ -69,19 +83,18 @@ class Ls
 
   def format_item_stats
     blocks = 0
-    item_stats = []
-    @items.each do |item|
-      item_stat = File.lstat((@target_dir + item).to_s)
-      item_stats << {
+    item_stats = @items.map do |item|
+      item_stat = File.lstat((@is_dir ? @target + item : @target).to_s)
+      blocks += item_stat.blocks
+      {
         mode: format_mode(item_stat.mode.to_s(8)),
         nlink: item_stat.nlink.to_s,
-        uname: format_uname(item_stat.uid),
-        gname: format_gname(item_stat.gid),
+        uname: Etc.getpwuid(item_stat.uid).name,
+        gname: Etc.getgrgid(item_stat.gid).name,
         size: item_stat.size.to_s,
         atime: format_time(item_stat.mtime),
         item_name: item
       }
-      blocks += item_stat.blocks
     end
     [item_stats, blocks]
   end
@@ -101,19 +114,11 @@ class Ls
   end
 
   def format_time(time)
-    if time > Time.new(time.year - 1, time.mon, time.day, time.hour, time.min, time.sec)
-      format('%2<month>d %2<day>d %02<hour>d:%02<min>d', month: time.month, day: time.day, hour: time.hour, min: time.min)
+    if time > Time.new(Time.now.year - 1, time.mon, time.day, time.hour, time.min, time.sec)
+      time.strftime('%_m %_d %H:%M')
     else
-      format('%2<month>d %2<day>d  %4<year>d', month: time.month, day: time.day, year: time.year)
+      time.strftime('%_m %_d  %Y')
     end
-  end
-
-  def format_uname(uid)
-    Etc.getpwuid(uid).name
-  end
-
-  def format_gname(gid)
-    Etc.getgrgid(gid).name
   end
 end
 
@@ -127,6 +132,6 @@ if __FILE__ == $PROGRAM_NAME
   opt.on('-l') { |v| params[:l] = v }
   opt.parse!(ARGV)
 
-  ls = Ls.new(target_dir: ARGV[0] || '.', params: params)
+  ls = Ls.new(target: ARGV[0] || '.', params: params)
   ls.execute
 end
