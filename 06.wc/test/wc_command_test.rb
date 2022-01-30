@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'minitest/autorun'
 require './lib/wc_command'
 
@@ -9,7 +10,7 @@ class WcTest < Minitest::Test
     target_path = "#{ROOT_PATH}/aaa.txt"
 
     expected = `wc #{target_path}`.chomp
-    assert_equal expected, run_wc(paths: [target_path] )
+    assert_equal expected, run_wc(paths: [target_path])
   end
 
   def test_wc_command_for_plural_files
@@ -17,14 +18,14 @@ class WcTest < Minitest::Test
     target_path_2 = "#{ROOT_PATH}/bbb.txt"
 
     expected = `wc #{target_path_1} #{target_path_2}`.chomp
-    assert_equal expected, run_wc(paths: [ target_path_1, target_path_2 ])
+    assert_equal expected, run_wc(paths: [target_path_1, target_path_2])
   end
 
   def test_wc_command_for_a_file_with_l_option
     target_path = "#{ROOT_PATH}/aaa.txt"
 
     expected = `wc -l #{target_path}`.chomp
-    assert_equal expected, run_wc(paths: [ target_path ], line_only: true)
+    assert_equal expected, run_wc(paths: [target_path], line_only: true)
   end
 
   def test_wc_command_for_plural_files_with_l_option
@@ -32,7 +33,7 @@ class WcTest < Minitest::Test
     target_path_2 = "#{ROOT_PATH}/bbb.txt"
 
     expected = `wc -l #{target_path_1} #{target_path_2}`.chomp
-    assert_equal expected, run_wc(paths: [ target_path_1, target_path_2 ], line_only: true)
+    assert_equal expected, run_wc(paths: [target_path_1, target_path_2], line_only: true)
   end
 
   def test_wc_for_a_file
