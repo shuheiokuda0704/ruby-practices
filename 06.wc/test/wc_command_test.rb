@@ -41,13 +41,15 @@ class WcTest < Minitest::Test
     assert_equal expected, run_wc(pathnames: target_pathnames, line_only: true)
   end
 
-  # def test_wc_command_with_pipe
-  #   expected = `ls -l | wc`.chomp
-  #   assert_equal expected, run_wc
-  # end
+  def test_wc_command_with_pipe
+    expected = `ls -l #{ROOT_PATHNAME} | wc`.chomp
+    actual = `ruby ../05.ls/ls.rb -l #{ROOT_PATHNAME} | bin/wc.rb `
+    assert_equal expected, actual
+  end
 
-  # def test_wc_command_with_pipe_with_l_option
-  #   expected = `ls -l | wc -l`.chomp
-  #   assert_equal expected, run_wc
-  # end
+  def test_wc_command_with_pipe_with_l_option
+    expected = `ls -l #{ROOT_PATHNAME} | wc -l`.chomp
+    actual = `ruby ../05.ls/ls.rb -l #{ROOT_PATHNAME} | bin/wc.rb -l`
+    assert_equal expected, actual
+  end
 end
