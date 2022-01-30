@@ -14,11 +14,11 @@ class WcTest < Minitest::Test
   end
 
   def test_wc_command_for_plural_files
-    target_path_1 = "#{ROOT_PATH}/aaa.txt"
-    target_path_2 = "#{ROOT_PATH}/bbb.txt"
+    target_path_a = "#{ROOT_PATH}/aaa.txt"
+    target_path_b = "#{ROOT_PATH}/bbb.txt"
 
-    expected = `wc #{target_path_1} #{target_path_2}`.chomp
-    assert_equal expected, run_wc(paths: [target_path_1, target_path_2])
+    expected = `wc #{target_path_a} #{target_path_b}`.chomp
+    assert_equal expected, run_wc(paths: [target_path_a, target_path_b])
   end
 
   def test_wc_command_for_a_file_with_l_option
@@ -29,11 +29,11 @@ class WcTest < Minitest::Test
   end
 
   def test_wc_command_for_plural_files_with_l_option
-    target_path_1 = "#{ROOT_PATH}/aaa.txt"
-    target_path_2 = "#{ROOT_PATH}/bbb.txt"
+    target_path_a = "#{ROOT_PATH}/aaa.txt"
+    target_path_b = "#{ROOT_PATH}/bbb.txt"
 
-    expected = `wc -l #{target_path_1} #{target_path_2}`.chomp
-    assert_equal expected, run_wc(paths: [target_path_1, target_path_2], line_only: true)
+    expected = `wc -l #{target_path_a} #{target_path_b}`.chomp
+    assert_equal expected, run_wc(paths: [target_path_a, target_path_b], line_only: true)
   end
 
   def test_wc_for_a_file
