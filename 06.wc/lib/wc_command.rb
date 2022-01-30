@@ -12,7 +12,7 @@ def collect_items(paths)
     file = File.pipe?(path) ? path : File.open(path, 'r') 
     file.each_line do |line|
       line_num += 1
-      word_num += line.split(/[[:space:]]/).size
+      word_num += line.split(/[[:space:]]/).reject(&:empty?).size
       char_num += line.size
     end
 
