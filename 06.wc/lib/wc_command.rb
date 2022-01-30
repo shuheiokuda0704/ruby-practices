@@ -24,8 +24,6 @@ def collect_items(paths)
     word_num = items.sum { |item| item[:word_num] }
     char_num = items.sum { |item| item[:char_num] }
     items.append ({ line_num: line_num, word_num: word_num, char_num: char_num, path: 'total' })
-  else paths.size.zero? && stdin
-
   end
 
   items
