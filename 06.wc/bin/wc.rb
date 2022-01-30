@@ -12,6 +12,6 @@ params = { line_only: false }
 opt.on('-l') { |v| params[:line_only] = v }
 opt.parse!(ARGV)
 
-pathnames = ARGV.map { |path| Pathname(path) }
+paths = ARGV.size.zero? && File.pipe?(STDIN) ? [ STDIN ] : ARGV
 
-puts run_wc(pathnames: pathnames, **params)
+puts run_wc(paths: paths, **params)

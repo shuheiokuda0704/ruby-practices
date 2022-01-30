@@ -2,54 +2,48 @@
 require 'minitest/autorun'
 require './lib/wc_command'
 
-require 'pathname'
-
 class WcTest < Minitest::Test
-  ROOT_PATHNAME = 'test/fixtures/sample-directory'
+  ROOT_path = 'test/fixtures/sample-directory'
 
   def test_wc_command_for_a_file
-    target_pathname = "#{ROOT_PATHNAME}/aaa.txt"
-    target_pathnames = [ target_pathname ].map { |path| Pathname(path) }
+    target_path = "#{ROOT_path}/aaa.txt"
 
-    expected = `wc #{target_pathname}`.chomp
-    assert_equal expected, run_wc(pathnames: target_pathnames)
+    expected = `wc #{target_path}`.chomp
+    assert_equal expected, run_wc(paths: [target_path] )
   end
 
   def test_wc_command_for_plural_files
-    target_pathname_1 = "#{ROOT_PATHNAME}/aaa.txt"
-    target_pathname_2 = "#{ROOT_PATHNAME}/bbb.txt"
-    target_pathnames = [ target_pathname_1, target_pathname_2 ].map { |path| Pathname(path) }
+    target_path_1 = "#{ROOT_path}/aaa.txt"
+    target_path_2 = "#{ROOT_path}/bbb.txt"
 
-    expected = `wc #{target_pathname_1} #{target_pathname_2}`.chomp
-    assert_equal expected, run_wc(pathnames: target_pathnames)
+    expected = `wc #{target_path_1} #{target_path_2}`.chomp
+    assert_equal expected, run_wc(paths: [ target_path_1, target_path_2 ])
   end
 
   def test_wc_command_for_a_file_with_l_option
-    target_pathname = "#{ROOT_PATHNAME}/aaa.txt"
-    target_pathnames = [ target_pathname ].map { |path| Pathname(path) }
+    target_path = "#{ROOT_path}/aaa.txt"
 
-    expected = `wc -l #{target_pathname}`.chomp
-    assert_equal expected, run_wc(pathnames: target_pathnames, line_only: true)
+    expected = `wc -l #{target_path}`.chomp
+    assert_equal expected, run_wc(paths: [ target_path ], line_only: true)
   end
 
   def test_wc_command_for_plural_files_with_l_option
-    target_pathname_1 = "#{ROOT_PATHNAME}/aaa.txt"
-    target_pathname_2 = "#{ROOT_PATHNAME}/bbb.txt"
-    target_pathnames = [ target_pathname_1, target_pathname_2 ].map { |path| Pathname(path) }
+    target_path_1 = "#{ROOT_path}/aaa.txt"
+    target_path_2 = "#{ROOT_path}/bbb.txt"
 
-    expected = `wc -l #{target_pathname_1} #{target_pathname_2}`.chomp
-    assert_equal expected, run_wc(pathnames: target_pathnames, line_only: true)
+    expected = `wc -l #{target_path_1} #{target_path_2}`.chomp
+    assert_equal expected, run_wc(paths: [ target_path_1, target_path_2 ], line_only: true)
   end
 
   def test_wc_command_with_pipe
-    expected = `ls -l #{ROOT_PATHNAME} | wc`.chomp
-    actual = `ruby ../05.ls/ls.rb -l #{ROOT_PATHNAME} | bin/wc.rb `
+    expected = `ls -l #{ROOT_path} | wc`
+    actual = `ruby ../05.ls/ls.rb -l #{ROOT_path} | bin/wc.rb `
     assert_equal expected, actual
   end
 
   def test_wc_command_with_pipe_with_l_option
-    expected = `ls -l #{ROOT_PATHNAME} | wc -l`.chomp
-    actual = `ruby ../05.ls/ls.rb -l #{ROOT_PATHNAME} | bin/wc.rb -l`
+    expected = `ls -l #{ROOT_path} | wc -l`
+    actual = `ruby ../05.ls/ls.rb -l #{ROOT_path} | bin/wc.rb -l`
     assert_equal expected, actual
   end
 end
