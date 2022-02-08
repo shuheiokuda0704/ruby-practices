@@ -41,7 +41,7 @@ end
 def format_items(items, line_only)
   format_items = items.map do |item|
     if item[:dir]
-      # format("wc: %s: read: Is a directory", item[:path])   # TODO: STDERR
+      STDERR.puts format("wc: %s: read: Is a directory", item[:path])
     elsif line_only
       format(' %7<ln>d %<p>s', ln: item[:line_num], p: item[:path]).rstrip
     else
