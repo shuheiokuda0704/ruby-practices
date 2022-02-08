@@ -8,12 +8,18 @@ end
 
 def collect_items(paths)
   paths.map do |path|
-    next { line_num: 0, word_num: 0, char_num: 0, path: path, dir: true } if File.directory?(path)
-
-    file = File.pipe?(path) ? path : File.open(path, 'r')
-    line_num, word_num, char_num = file_stat(file)
-
-    { line_num: line_num, word_num: word_num, char_num: char_num, path: File.pipe?(path) ? '' : path, dir: false }
+    if File.directory?(path)
+      { line_num: 0, word_num: 0, char_num: 0, path: path, dir: true }
+    elsif File.pipe?(path)
+      file = path
+      line_num, word_num, char_num = file_stat(file)
+      { line_num: line_num, word_num: word_num, char_num: char_num, path: '', dir: false }
+    else
+      file = File.open(path, 'r')
+      line_num, word_num, char_num = file_stat(file)
+      file.close
+      { line_num: line_num, word_num: word_num, char_num: char_num, path: path, dir: false }
+    end
   end
 end
 
@@ -41,7 +47,7 @@ end
 def format_items(items, line_only)
   format_items = items.map do |item|
     if item[:dir]
-      STDERR.puts format("wc: %s: read: Is a directory", item[:path])
+      warn format('wc: %s: read: Is a directory', item[:path])
     elsif line_only
       format(' %7<ln>d %<p>s', ln: item[:line_num], p: item[:path]).rstrip
     else
