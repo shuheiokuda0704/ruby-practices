@@ -14,13 +14,13 @@ def collect_items(paths)
       file = path
       line_num, word_num, char_num = file_stat(file)
       { line_num: line_num, word_num: word_num, char_num: char_num, path: '', dir: false }
-    else
+    elsif File.file?(path)
       file = File.open(path, 'r')
       line_num, word_num, char_num = file_stat(file)
       file.close
       { line_num: line_num, word_num: word_num, char_num: char_num, path: path, dir: false }
     end
-  end
+  end.compact
 end
 
 def file_stat(file)
