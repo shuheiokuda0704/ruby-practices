@@ -12,6 +12,4 @@ params = { line_only: false }
 opt.on('-l') { |v| params[:line_only] = v }
 opt.parse!(ARGV)
 
-paths = ARGV.size.zero? ? [$stdin] : ARGV
-
-puts run_wc(paths: paths, **params)
+puts run_wc(paths: ARGV, **params)
