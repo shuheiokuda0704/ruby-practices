@@ -22,11 +22,11 @@ class Game
         elsif frame.strike?
           score += @frames[next_frame_index].first_shot.score
 
-          if @frames[next_frame_index].strike?
-            score += @frames[next_frame_index + 1].first_shot.score
-          else
-            score += @frames[next_frame_index].second_shot.score
-          end
+          score += if @frames[next_frame_index].strike?
+                     @frames[next_frame_index + 1].first_shot.score
+                   else
+                     @frames[next_frame_index].second_shot.score
+                   end
         end
       end
     end

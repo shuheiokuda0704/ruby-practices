@@ -16,7 +16,7 @@ class FrameTest < Minitest::Test
   end
 
   def test_spare
-    frame = Frame.new(['1', '9'])
+    frame = Frame.new(%w[1 9])
 
     assert !frame.strike?
     assert frame.spare?
@@ -27,7 +27,7 @@ class FrameTest < Minitest::Test
   end
 
   def test_score_9
-    frame = Frame.new(['1', '8'])
+    frame = Frame.new(%w[1 8])
 
     assert !frame.strike?
     assert !frame.spare?
@@ -38,7 +38,7 @@ class FrameTest < Minitest::Test
   end
 
   def test_score_0
-    frame = Frame.new(['0', '0'])
+    frame = Frame.new(%w[0 0])
 
     assert !frame.strike?
     assert !frame.spare?
@@ -49,7 +49,7 @@ class FrameTest < Minitest::Test
   end
 
   def test_final_frame_all_strike
-    frame = Frame.new(['X', 'X', 'X'])
+    frame = Frame.new(%w[X X X])
 
     assert_equal 30, frame.score
     assert_equal 10, frame.first_shot.score
@@ -58,12 +58,11 @@ class FrameTest < Minitest::Test
   end
 
   def test_final_frame_spare_and_strike
-    frame = Frame.new(['1', '9', 'X'])
+    frame = Frame.new(%w[1 9 X])
 
     assert_equal 20, frame.score
     assert_equal 1, frame.first_shot.score
     assert_equal 9, frame.second_shot.score
-    assert_equal 10,  frame.third_shot.score
+    assert_equal 10, frame.third_shot.score
   end
-
 end

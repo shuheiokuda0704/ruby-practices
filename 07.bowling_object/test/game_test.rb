@@ -20,7 +20,6 @@ class GameTest < Minitest::Test
     game = Game.new('6,3,9,0,0,3,8,2,7,3,X,9,1,8,0,X,6,4,5')
 
     assert_equal 139, game.score
-
   end
 
   def test_pattern_score_164

@@ -8,6 +8,6 @@ class Shot
   end
 
   def score
-    return @char.eql?('X') ? 10 : @char.to_i
+    @char.eql?('X') ? 10 : @char.to_i
   end
 end
