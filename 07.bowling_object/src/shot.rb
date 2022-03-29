@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class Shot
-  attr_reader :mark
-
   def initialize(char)
     @char = char
   end
