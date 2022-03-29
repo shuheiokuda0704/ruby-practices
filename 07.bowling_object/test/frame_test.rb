@@ -26,7 +26,7 @@ class FrameTest < Minitest::Test
     assert_equal 0, frame.third_shot.score
   end
 
-  def test_score_9
+  def test_score9
     frame = Frame.new(%w[1 8])
 
     assert !frame.strike?
@@ -37,7 +37,7 @@ class FrameTest < Minitest::Test
     assert_equal 0, frame.third_shot.score
   end
 
-  def test_score_0
+  def test_score0
     frame = Frame.new(%w[0 0])
 
     assert !frame.strike?
